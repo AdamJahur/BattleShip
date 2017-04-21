@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,maximum-scale=1">
+	<title>JavaScript BattleShip</title>
+	<link rel="stylesheet" media="all" href="css/style.css">
+</head>
+<body>
+	<div class="container">
+		<h1>JavaScript BattleShip</h1>
+		<p class="tagline">A JavaScript AI that can beat any human in BattleShip.</p>
+		<p>How to play</p>
+		<ol class="instructions">
+			<li id="step1">Select your ships from the left-hand side</li>
+			<li id="step2">Place your ships on your map</li>
+			<li id="step3">Click on the cells of the enemy's map<br>
+			to find and destroy all five enemy ships</li>
+			<li id="step4">The computer will fire on your ships<br>
+			immediately after you fire on its ships.</li>
+		</ol>
+		<div class="game-container">
+			<div id="restart-sidebar" class="hidden">
+				<h2>Try Again</h2>
+				<button id="restart-game">Restart Game</button>
+			</div>
+			<div id="roster-sidebar">
+				<h2>Place Your Ships</h2>
+				<ul class="fleet-roster">
+					<li id="patrolboat">Patrol Boat</li>
+					<li id="submarine">Submarine</li>
+					<li id="destroyer">Destroyer</li>
+					<li id="battleship">Battleship</li>
+					<li id="carrier">Aircraft Carrier</li>
+				</ul>
+				<button id="rotate-button" data-direction="0">Rotate Ship</button>
+				<button id="start-game" class="hidden">Start Game</button>
+				<button id="place-randomly" class="hidden">Place Randomly and Start</button>
+			</div>
+			<div id="stats-sidebar">
+				<h2>Stats</h2>
+				<p><strong>Games Wom</strong></p>
+				<p id="stats-wins">0 of 0</p>
+				<p><strong>Accuracy</strong></p>
+				<p id="stats-accuracy">0%</p>
+				<button id="reset-stats">Reset Stats</button>
+			</div>
+		</div>
+
+		<p>Created By: <a href="https://adamjahur.github.io/Portfolio/">Adam Jahur</a></p>
+		<p>View the source code <a href="https://github.com/AdamJahur/BattleShip"> on GitHub</a></p>
+	</div>
+</body>
+</html>
