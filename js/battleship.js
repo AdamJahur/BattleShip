@@ -97,6 +97,95 @@ Stats.prototype.resetStats = function(e) {
 	Game.stats.updateStatsSidebar();
 };
 
+//Game manager object
+//Constructor
+function Game(size) {
+	Game.size = size;
+	this.shotsTaken = 0;
+	this.createGrid();
+	this.init();
+}
+Game.size = 10; // Default grid size is 10x10
+Game.gameOver = false;
+// Checks if the game is won, and if it is, re-initializes the game
+Game.prototype.checkIfWon = function() {
+	if (this.computerFleet.allShipsSunk()) {
+		alert('Congratulations, you win!');
+		Game.gameOver = true;
+		Game.stats.syncStats();
+		Game.stats.updateStatsSidebar();
+		this.showResetSidebar();
+	} else if (this.humanFleet.allShipsSunk()) {
+		alert('Yarr! The computer sank your ships. Try again.');
+		Game.gameOver = true;
+		Game.stats.lostGame();
+		Game.stats.syncStats();
+		Game.stats.updateStatsSidebar();
+		this.showResetSidebar();
+	}
+};
+
+// Shoots at the target player on the grid.
+// Returns {int} Constants.TYPE: What the shot uncovered
+Game.prototype.shoot = function(x, y, targetPlayer) {
+	var targetGrid;
+	var targetFleet;
+	if (targetPlayer === CONST.HUMAN_PLAYER) {
+		targetGrid = this.humanGrid;
+		targetFleet = this.humanFleet;
+	} else if (targetPlayer === CONST.COMPUTER_PLAYER) {
+		targetGrid = this.computerGrid;
+		targetFleet = this.computerFleet;
+	} else {
+		// Should never be called
+		console.log("There was an error trying to find the correct player to target");
+	}
+
+	if (targetGrid.isDamagedShip(x, y)) {
+		return null;
+	} else if (targetGrid.isMiss(x, y)) {
+		return null;
+	} else if (targetGrid.isUndamagedShip(x, y)) {
+		//update grid/board
+		targetGrid.updateCell(x, y, 'hit', targetPlayer);
+		// IMPORTANT: This function needs to be called _after_ updating the cell to a 'hit',
+		// because it overrides the CSS class to 'sunk' if we find that the ship was sunk.
+		targetFleet.findShipByCoords(x, y).incrementDamage(); //Increase damage
+		this.checkIfWon();
+		return CONST.TYPE_HIT;
+	} else {
+		targetGrid.updateCell(x, y, 'miss', targetPlayer);
+		this.checkIfWon();
+		return CONST.TYPE_MISS;
+	}
+};
+
+// Creates click event listeners on each one of the 100 grid cells
+Game.prototype.shootListener = function(e) {
+	var self = e.target.self;
+	// Extract coordinates from event listener
+	var x = parseInt(e.target.getAttribute('data-x'), 10);
+	var y = parseInt(e.target.getAttribute('data-y'), 10);
+	var result = null;
+	if (self.readyToPlay) {
+		result = self.shoot(x, y, CONST.COMPUTER_PLAYER);
+	}
+
+	if (result !== null && !Game.gameOver) {
+		Game.stats.incrementShots();
+		if (result === CONST.TYPE_HIT) {
+			Game.stats.hitShot();
+		}
+		// The AI shoots iff the player clicks on a cell that he/she hasn't
+		// already clicked on yet
+		self.robot.shoot();
+	} else {
+		Game.gameOver = false;
+	}
+};
+
+}
+
 
 })
 
