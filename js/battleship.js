@@ -184,7 +184,85 @@ Game.prototype.shootListener = function(e) {
 	}
 };
 
-}
+// Creates click event listeners on each of the ship names in the roster
+Game.prototype.rosterListener = function(e) {
+	var self = e.target.self;
+	//Remove all classes of 'placing' from the fleet roster first
+	var roster = document.querySelectorAll('.fleet-roster li');
+	for (var i = 0; i < roster.length; i++) {
+		var classes = roster[i].getAttribute('class') || '';
+		classes = classes.replace('placing', '');
+		roster[i].setAttribute('class', classes);
+	}
+
+	// Set the class of the target ship to 'placing'
+	Game.placeShipType = e.target.getAttribute('id');
+	document.getElementById(Game.placeShipType).setAttribute('class', 'placing');
+	Game.placeShipDirection = parseInt(document.getElementById('rotate-button').getAttribute('data-direction'), 10);
+	self.placingOnGrid = true;
+};
+
+// Creates click event listeners on the human player's grid to handle
+// ship placement after the user has selected a ship name
+Game.prototype.placmentListener = function(e) {
+	var self = e.target.self;
+	if (self.placingOnGrid) {
+		//Extract coordinates from event listener
+		var x = parseInt(e.target.getAttribute('data-x'), 10);
+		var y = parseInt(e.target.getAttribute('data-y'), 10);
+
+		//Dont screw up direction if the user tries to place again
+		var successful = self.humanFleet.placeShip(x, y, Game.placeShipDirection, Game.placeShipType);
+		if (successful) {
+			// Done placing the ship
+			self.endPlacing(Game.placeShipType);
+		
+
+			self.placingOnGrid = false;
+			if (self.areAllShipsPlaced()) {
+				var el = document.getElementById('rotate-button');
+				el.addEventListner(transitionEndEventName(), (function() {
+					el.setAttribute('class', 'hidden');
+					document.getElementById('start-game').removeAttribute('class');
+				}),false);
+				el.setAttribute('class', 'invisible');
+			}
+		}
+	}
+};
+// Creates mouseover event listeners that handles mouseover on the
+// human player's grid to draw a phantom ship implying that the user
+// is allowed to place a ship there
+Game.prototype.placementMouseover = function(e) {
+	var self = e.target.self;
+	if (self.placingOnGrid) {
+		var x = parseInt(e.target.getAttribute('data-x'), 10);
+		var y = parseInt(e.target.getAttribute('data-y'), 10);
+		var classes;
+		var fleetRoster = self.humanFleet.fleetRoster;
+
+		for (var i = 0; i < fleetRoster.length; i++) {
+			var shipType = fleetRoster[i].type;
+
+			if (Game.placeShipType === shipType &&
+				fleetRoster[i].isLegal(x, y, Game.placeShipDirection)) {
+				// Virtual Ship
+				fleetRoster[i].create(x, y, Game.placeShipDirection, true);
+				Game.placeShipCoords = fleetRoster[i].getAllShipCells();
+
+				for (var j = 0; j < Game.placeShipCoords.length; j++) {
+					var el = document.querySelector('.grid-cell-' + Game.placeShipCoords[j].x + '-' + Game.placeShipCoords[j].y);
+					classes = el.getAttribute('class');
+					// Check if the substring ' grid-ship' already exists to avoid adding it twice
+					if (classes.indexOf('grid-ship') < 0) {
+						classes += ' grid-ship';
+						el.setAttribute('class', classes);
+					}
+				}
+			}
+		}
+	}
+};
 
 
 })
