@@ -474,6 +474,59 @@ Game.prototype.init = function() {
 
 // Grid object
 // Constructor
+function Grid(size) {
+	this.size = size;
+	this.cells = [];
+	this.init();
+}
+
+// Initialize and populate the grid
+Grid.prototype.init = function() {
+	for (var x = 0; x < this.size; x++) {
+		var row = [];
+		this.cells[x] = row;
+		for (var y = 0; y < this.size; y++) {
+			row.push(CONST.TYPE_EMPTY);
+		}
+	}
+};
+
+// Updates the cell's CSS class based on the type passed in
+Grid.prototype.updateCell = function(x, y, type, targetPlayer) {
+	var player;
+	if (targetPlayer === CONST.HUMAN_PLAYER) {
+		player = 'human-player';
+	} else if (targetPlayer === CONST.COMPUTER_PLAYER) {
+		player = 'computer-player';
+	} else {
+		// Should never be called
+		console.log("There was an error trying to find the correct player's grid");
+	}
+
+	switch (type) {
+		case CONST.CSS_TYPE_EMPTY:
+			this.cells[x][y] = CONST.TYPE_EMPTY;
+			break;
+		case CONST.CSS_TYPE_SHIP:
+			this.cells[x][y] = CONST.TYPE_SHIP;
+			break;
+		case CONST.CSS_TYPE_MISS:
+			this.cells[x][y] = CONST.TYPE_MISS;
+			break;
+		case CONST.CSS_TYPE_HIT:
+			this.cells[x][y] = CONST.TYPE_HIT;
+			break;
+		case CONST.CSS_TYPE_SUNK:
+			this.cells[x][y] = CONST.TYPE_SUNK;
+			break;
+		default:
+			this.cells[x][y] = CONST.TYPE_EMPTY;
+			break;
+	}
+
+	var classes = ['grid-cell', 'grid-cell-' + x + '-' + y, 'grid-' + type];
+	document.querySelector('.' + player + ' .grid-cell-' + x + '-' + y).setAttribute('class', classes.join(' '));
+};
 
 
 
