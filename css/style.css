@@ -172,6 +172,14 @@ button {
 	.grid-container:last child {
 		margin-left: 10x;
 	}
+	.no-js {
+		width: 300px;
+		height: 300px;
+		margin: 100px auto;
+		display: inline-block;
+		color: #EEEEEE;
+		font-size: 2em;
+	}
 .grid-cell {
 	vertical-align: top;
 	height: 40px;
