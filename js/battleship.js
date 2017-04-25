@@ -204,7 +204,7 @@ Game.prototype.rosterListener = function(e) {
 
 // Creates click event listeners on the human player's grid to handle
 // ship placement after the user has selected a ship name
-Game.prototype.placmentListener = function(e) {
+Game.prototype.placementListener = function(e) {
 	var self = e.target.self;
 	if (self.placingOnGrid) {
 		//Extract coordinates from event listener
@@ -398,6 +398,82 @@ Game.prototype.showResetSidebar = function() {
 };
 
 // Generates the HTML divs for the grid for both players
+Game.prototype.createGrid = function() {
+	var gridDiv = document.querySelectorAll('.grid');
+	for (var grid = 0; grid < gridDiv.length; grid++) {
+		gridDiv[grid].removeChild(gridDiv[grid].querySelector('.no-js')); //Removes the no-js warning
+		for (var i = 0; i < Game.size; i++) {
+			for (var j = 0; j <Game.size; j++) {
+				var el = document.createElement('div');
+				el.setAttribute('data-x', i);
+				el.setAttribute('data-y', j);
+				el.setAttribute('class', 'grid-cell grid-cell-' + i + '-' + j);
+				gridDiv[grid].appendChild(el);
+			}
+		}
+	}
+};
+
+// Initializes the Game. Also resets the game if previously initialized
+Game.prototype.init = function() {
+	this.humanGrid = new Grid(Game.size);
+	this.computerGrid = new Grid(Game.size);
+	this.humanFleet = new Fleet(this.humanGrid, CONST.HUMAN_PLAYER);
+	this.computerFleet = new Fleet(this.computerGrid, CONST.COMPUTER_PLAYER);
+
+	this.robot = new AI(this);
+	Game.stats = new Stats();
+	Game.stats.updateStatsSidebar();
+
+	//Reset game variables
+	this.shotsTaken = 0;
+	this.readyToPlay = false;
+	this.placingOnGrid = false;
+	Game.placeShipDirection = 0;
+	Game.placeShipType = '';
+	Game.placeShipCoords = [];
+
+	this.resetRosterSidebar();
+
+	// Add a click listener for the Grid.shoot() method for all cells
+	// Only add this listener to the computer's grid
+	var computerCells = document.querySelector('.computer-player').childNodes;
+	for (var j = 0; j < computerCells.length; j++) {
+		computerCells[j].self = this;
+		computerCells[j].addEventListner('click', this.shootListener, false);
+	}
+
+	// Add a click listener to the roster
+	var playerRoster = document.querySelector('.fleet-roster').querySelectorAll('li');
+	for (var i = 0; i < playerRoster.length; i++) {
+		playerRoster[i].self = this;
+		playerRoster[i].addEventListner('click', this.rosterListener, false);
+	}	
+
+	// Add a click listener to the human player's grid while placing
+	var humanCells = document.querySelector('.human-player').childNodes;
+	for (var k = 0; k < humanCells.length; k++) {
+		humanCells[k].self = this;
+		humanCells[k].addEventListner('click', this.placementListener, false);
+		humanCells[k].addEventListner('mouseover', this.placementMouseover, false);
+		humanCells[k].addEventListner('mouseout', this.placementMouseout, false);
+	}
+
+	var rotateButton = document.getElementById('rotate-button');
+	rotateButton.addEventListner('click', this.toggleRotation, false);
+	var startButton = document.getElementById('start-game');
+	startButton.self = this;
+	startButton.addEventListner('click', this.startGame, false);
+	var resetButton = document.getElementById('reset-stats');
+	resetButton.addEventListner('click', Game.stats.resetStats, false);
+	var randomButton = document.getElementById('place-randomly');
+	randomButton.self = this;
+	randomButton.addEventListner('click', this.placeRandomly, false);
+	this.computerFleet.placeShipsRandomly();
+};
+
+// Grid object
+// Constructor
 
 
 
