@@ -551,6 +551,43 @@ Grid.prototype.isDamagedShip = function(x, y) {
 // Fleet object
 // This object is used to keep track of a player's portfolio of ships
 // Constructor
+function Fleet(playerGrid, player) {
+	this.numShips = CONST.AVAILABLE_SHIPS.length;
+	this.playerGrid = playerGrid;
+	this.player = player;
+	this.fleetRoster = [];
+	this.populate();
+}
+
+// Populates a fleet
+Fleet.prototype.populate = function() {
+	for (var i = 0; i < this.numShips; i++) {
+		// loop over the ship types when numShips > Constants.AVAILABLE_SHIPS.length
+		var j = i % CONST.AVAILABLE_SHIPS.length;
+		this.fleetRoster.push(new Ship(CONST.AVAILABLE_SHIPS[j], this.playerGrid, this.player));
+	}
+};
+
+// Places the ship and returns whether or not the placement was successful
+// Returns boolean
+Fleet.prototype.placeShip = function(x, y, direction, shipType) {
+	var shipCoords;
+	for (var i = 0; i < this.fleetRoster.length; i++) {
+		var shipTypes = this.fleetRoster[i].type;
+
+		if (shipType === shipTypes &&
+			this.fleetRoster[i].isLegal(x, y, direction)) {
+			this.fleetRoster[i].create(x, y, direction, false);
+			shipCoords = this.fleetRoster[i].getAllShipCells();
+
+			for (var j = 0; j < shipCoords.length; j++) {
+				this.playerGrid.updateCell(shipCoords[j].x, shipCoords[j].y, 'ship', this.player);
+			}
+			return true;
+		}
+	}
+	return false;
+};
 
 
 })
