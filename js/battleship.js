@@ -648,6 +648,33 @@ Fleet.prototype.findShipByCoords = function(x, y) {
 	return null;
 };
 
+// Finds a ship by its type
+// Param shipType is a string
+// Returns the ship object that is of type shipType
+// If no ship exists, this returns null.
+Fleet.prototype.findShipByType = function(shipType) {
+	for (var i = 0; i < this.fleetRoster.length; i++) {
+		if (this.fleetRoster[i].type === shipType) {
+			return this.fleetRoster[i];
+		}
+	}
+	return null;
+};
+
+// Checks to see if all ships have been sunk
+// Returns boolean
+Fleet.prototype.allShipsSunk = function() {
+	for (var i = 0; i < this.fleetRoster.length; i++) {
+		// If one or more ships are not sunk, then the sentence "all ships are sunk" is false.
+		if (this.fleetRoster[i].sunk === false) {
+			return false;
+		}
+	}
+	return true;
+};
+
+
+
 
 })
 
