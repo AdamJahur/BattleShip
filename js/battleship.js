@@ -673,9 +673,17 @@ Fleet.prototype.allShipsSunk = function() {
 	return true;
 };
 
+// Ship object
+// Constructor
 
 
 
-})
 
 
+
+
+
+
+
+
+})();
