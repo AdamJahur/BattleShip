@@ -307,6 +307,97 @@ Game.prototype.startGame = function(e) {
 };
 
 // Click handler for Restart Game button
+Game.prototype.restartGame = function(e) {
+	e.target.removeEventListener(e.type, arguments.callee);
+	var self = e.target.self;
+	document.getElementById('restart-sidebar').setAttribute('class', 'hidden');
+	self.resetFogOfWar();
+	self.init();
+};
+
+// Debugging function used to place all ships and just start
+Game.prototype.placeRandomly = function(e) {
+	e.target.removeEventListener(e.type, arguments.callee);
+	e.target.self.humanFleet.placeShipsRandomly();
+	e.target.self.readyToPlay = true;
+	document.getElementById('roster-sidebar').setAttribute('class', ' hidden');
+	this.setAttribute('class', 'hidden');
+};
+
+// Ends placing the current ship
+Game.prototype.endPlacing = function(e) {
+	document.getElementById(shipType).setAttribute('class', 'placed');
+
+	// Mark the shipas 'used'
+	Game.usedShips[CONST.AVAILABLE_SHIPS.indexOf(shipType)] = CONST.USED;
+
+	// Wipe out the variable when you're done with it
+	Game.placeShipDirection = null;
+	Game.placeShipType = '';
+	Game.placeShipCoords = [];
+};
+
+// Checks whether or not all ships are done placing
+// Returns boolean
+Game.prototype.areAllShipsPlaced = function() {
+	var playerRoster = document.querySelectorAll('.fleet-roster li');
+	for (var i = 0; i < playerRoster.length; i++) {
+		if (playerRoster[i].getAttribute('class') === 'placed') {
+			continue;
+		} else {
+			return false;
+		}
+	}
+	// Reset temporary variables
+	Game.placeShipDirection = null;
+	Game.placeShipType = '';
+	Game.placeShipCoords = [];
+	return true;
+};
+
+// Resets the fog of war
+Game.prototype.resetFogOfWar = function() {
+	for (var i = 0; i < Game.size; i++) {
+		for (var j = 0; j < Game.size; j++) {
+			this.humanGrid.updateCell(i, j, 'empty', CONST.HUMAN_PLAYER);
+			this.computerGrid.updateCell(i, j, 'empty', CONST.COMPUTER_PLAYER);
+		}
+	}
+	// Reset all values to indicate the ships are ready to be placed again
+	Game.usedShips = Game.usedShips.map(function(){return CONST.UNUSED;});
+};
+
+// Resets CSS styling of the sidebar
+Game.prototype.resetRosterSidebar = function() {
+	var els = document.querySelector('.fleet-roster').querySelectorAll('li');
+	for (var i = 0; i < els.length; i++) {
+		els[i].removeAttribute('class');
+	}
+	document.getElementById('roster-sidebar').removeAttribute('class');
+	document.getElementById('rotate-button').removeAttribute('class');
+	document.getElementById('start-game').setAttribute('class', 'hidden');
+};
+
+Game.prototype.showResetSidebar = function() {
+	var sidebar = document.getElementById('restart-sidebar');
+	sidebar.setAttribute('class', 'highlight');
+
+	// Deregister listeners
+	var computerCells = document.querySelector('.computer-player').childNodes;
+	for (var j = 0; j < computerCells.length; j++) {
+		computerCells[j].removeEventListener('click', this.shootListener, false);
+	}
+	var playerRoster = document.querySelector('.fleet-roster').querySelectorAll('li');
+	for (var i = 0; i < playerRoster.length; i++) {
+		playerRoster[i].removeEventListener('click', this.rosterListener, false);
+	}
+
+	var restartButton = document.getElementById('restart-game');
+	restartButton.addEventListner('click', this.restartGame, false);
+	restartButton.self = this;
+};
+
+// Generates the HTML divs for the grid for both players
 
 
 
