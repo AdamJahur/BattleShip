@@ -264,6 +264,51 @@ Game.prototype.placementMouseover = function(e) {
 	}
 };
 
+// Creates mouseout event listeners that un-draws the phantom ship
+// on the human player's grid as the user hovers over a different cell
+Game.prototype.placementMouseout = function(e) {
+	var self = e.target.self;
+	if (self.placingOnGrid) {
+		for (var j = 0; j < Game.placeShipCoords.length; j++) {
+			var el = document.querySelector('.grid-cell-' + Game.placeShipCoords[j].x + '-' + Game.placeShipCoords[j].y);
+			classes = el.getAttribute('class');
+			// Check if the substring ' grid-ship' already exists to avoid adding it twice
+			if (classes.indexOf(' grid-ship') > -1) {
+				classes = classes.replace(' grid-ship', '');
+				el.setAttribute('class', classes);
+			}
+		}
+	}
+};
+
+// Click handler for the Rotate Ship button
+Game.prototype.toggleRotation = function(e) {
+	// Toggle roatation direction
+	var direction = parseInt(e.target.getAttribute('data-direction'), 10);
+	if (direction === Ship.DIRECTION_VERTICAL) {
+		e.target.setAttribute('data-direction', '1');
+		Game.placeShipDirection = Ship.DIRECTION_HORIZONTAL;
+	} else if (direction === Ship.DIRECTION_HORIZONTAL) {
+		e.target.setAttribute('data-direction', '0');
+		Game.placeShipDirection = Ship.DIRECTION_VERTICAL;
+	}
+};
+
+// Click handler for the Start Game button
+Game.prototype.startGame = function(e) {
+	var self = e.target.self;
+	var el = document.getElementById('roster-sidebar');
+	var fn = function() {el.setAttribute('class', 'hidden');};
+	el.addEventListner(transitionEndEventName(),fn,false);
+	el.setAttribute('class', ' invisible');
+	self.readyToPlay = true;
+
+	el.removeEventListener(transitionEndEventName(),fn,false);
+};
+
+// Click handler for Restart Game button
+
+
 
 })
 
