@@ -589,6 +589,65 @@ Fleet.prototype.placeShip = function(x, y, direction, shipType) {
 	return false;
 };
 
+// Places ships randomly on the board
+Fleet.prototype.placeShipsRandomly = function() {
+	var shipCoords;
+	for (var i = 0; i < this.fleetRoster.length; i++) {
+		var illegalPlacement = true;
+
+		// Prevents the random placement of already placed ships
+		if (this.player === CONST.HUMAN_PLAYER && Game.usedShips[i] === CONST.USED) {
+			continue;
+		}
+		while (illegalPlacement) {
+			var randomX = Math.floor(10*Math.random());
+			var randomY = Math.floor(10*Math.random());
+			var randomDirection = Math.floor(2*Math.random());
+
+			if (this.fleetRoster[i].isLegal(randomX, randomY, randomDirection)) {
+				this.fleetRoster[i].create(randomX, randomY, randomDirection, false);
+				shipCoords = this.fleetRoster[i].getAllShipCells();
+				illegalPlacement = false;
+			} else {
+				continue;
+			}
+		}
+		if (this.player === CONST.HUMAN_PLAYER && Game.usedShips[i] !== CONST.USED) {
+			for (var j = 0; j < shipCoords.length; j++) {
+				this.playerGrid.updateCell(shipCoords[j].x, shipCoords[j].y, 'ship', this.player);
+				Game.usedShips[i] = CONST.USED;
+			}
+		}
+	}
+};
+
+// Finds a ship by location
+// Returns the ship object located at (x, y)
+// If no ship exists at (x, y), this returns null instead
+Fleet.prototype.findShipByCoords = function(x, y) {
+	for (var i = 0; i < this.fleetRoster.length; i++) {
+		var currentShip = this.fleetRoster[i];
+		if (currentShip.direction === Ship.DIRECTION_VERTICAL) {
+			if (y === currentShip.yPosition &&
+				x >= currentShip.xPosition &&
+				x < currentShip.xPosition + currentShip.shipLength) {
+				return currentShip;
+			} else {
+				continue;
+			}
+		} else {
+			if (x === currentShip.xPosition &&
+				y >= currentShip.yPosition &&
+				y < currentShip.yPosition + currentShip.shipLength) {
+				return currentShip;
+			} else {
+				continue;
+			}
+		}
+	}
+	return null;
+};
+
 
 })
 
