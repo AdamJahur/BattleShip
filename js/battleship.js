@@ -528,6 +528,29 @@ Grid.prototype.updateCell = function(x, y, type, targetPlayer) {
 	document.querySelector('.' + player + ' .grid-cell-' + x + '-' + y).setAttribute('class', classes.join(' '));
 };
 
+// Checks to see if a cell contains an undamaged ship
+// Returns boolean
+Grid.prototype.isUndamagedShip = function(x, y) {
+	return this.cells[x][y] === CONST.TYPE_SHIP;
+};
+
+// Checks to see if the shot was missed. This is equivalent
+// to checking if a cell contains a cannonball
+// Returns boolean
+Grid.prototype.isMiss = function(x, y) {
+	return this.cells[x][y] === CONST.TYPE_MISS;
+};
+
+// Checks to see if a cell contains a damaged ship,
+// either hit or sunk.
+// Returns boolean
+Grid.prototype.isDamagedShip = function(x, y) {
+	return this.cells[x][y] === CONST.TYPE_HIT || this.cells[x][y] === CONST.TYPE_SUNK;
+};
+
+// Fleet object
+// This object is used to keep track of a player's portfolio of ships
+// Constructor
 
 
 })
