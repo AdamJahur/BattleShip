@@ -732,10 +732,24 @@ Ship.prototype.isLegal = function(x, y, direction) {
 	}
 };
 
+// Checks to see if the ship is within bounds of the grid
+// Returns boolean
+Ship.prototype.withinBounds = function(x, y, direction) {
+	if (direction === Ship.DIRECTION_VERTICAL) {
+		return x + this.shipLength <= Game.size;
+	} else {
+		return y + this.shipLength <= Game.size;
+	}
+};
 
-
-
-
+// Increments the damage counter of a ship
+// Returns Ship
+Ship.prototype.incrementDamage = function() {
+	this.damage++;
+	if (this.isSunk()) {
+		this.sinkShip(false); // Sinks the ship
+	}
+};
 
 
 
