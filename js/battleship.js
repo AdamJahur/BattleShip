@@ -675,6 +675,36 @@ Fleet.prototype.allShipsSunk = function() {
 
 // Ship object
 // Constructor
+function Ship(type, playerGrid, player) {
+	this.damage = 0;
+	this.type  = type;
+	this.playerGrid = playerGrid;
+	this.player = player;
+
+	switch (this.type) {
+		case CONST.AVAILABLE_SHIPS[0];
+			this.shipLength = 5;
+			break;
+		case CONST.AVAILABLE_SHIPS[1];
+			this.shipLength = 4;
+			break;
+		case CONST.AVAILABLE_SHIPS[2];
+			this.shipLength = 3;
+			break;
+		case CONST.AVAILABLE_SHIPS[3];
+			this.shipLength = 3;
+			break;
+		case CONST.AVAILABLE_SHIPS[4];
+			this.shipLength = 2;
+			break;
+		default:
+			this.shipLength = 3;
+			break;
+	}
+	this.maxDamage = this.shipLength;
+	this.sunk = false;
+}
+
 
 
 
