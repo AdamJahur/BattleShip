@@ -757,7 +757,72 @@ Ship.prototype.isSunk = function() {
 	return this.damage >= this.maxDamage;
 };
 
+// Sinks ship
+Ship.prototype.sinkShip = function(virtual) {
+	this.damage = this.maxDamage; // Force the damage to exceed max damage
+	this.sunk = true;
 
+	// Make the CSS class sunk, but only if the ship is not virtual
+	if (!virtual) {
+		var allCells = this.getAllShipCells();
+		for (var i = 0; i < this.shipLength; i++) {
+			this.playerGrid.updateCell(allCells[i].x, allCells[i].y, 'sunk', this.player);
+		}
+	} 
+};
+
+/**
+ * Gets all the ship cells
+ *
+ * Returns an array with all (x, y) coordinates of the ship:
+ * e.g.
+ * [
+ *	{'x':2, 'y':2},
+ *	{'x':3, 'y':2},
+ *	{'x':4, 'y':2}
+ * ]
+ */
+ Ship.prototype.getAllShipCells = function() {
+ 	var resultObject = [];
+ 	for (var i = 0; i < this.shipLength; i++) {
+ 		if (this.direction === Ship.DIRECTION_VERTICAL) {
+ 			resultObject[i] = {'x': this.xPosition + i, 'y': this.yPosition};
+ 		} else {
+ 			resultObject[i] = {'x': this.xPosition, 'y': this.yPosition + i};
+ 		}
+ 	}
+ 	return resultObject;
+ };
+
+// Initializes a ship with the given coordinates and direction (bearing).
+// If the ship is declared "virtual", then the ship gets initialized with
+// its coordinates but DOESN'T get placed on the grid.
+Ship.prototype.create = function(x, y, direction, virtual) {
+	// This function assumes that you've already checked that the placement is legal
+	this.xPosition = x;
+	this.yPosition = y;
+	this.direction = direction;
+
+	// If the ship is virtual, don't add it to the grid
+	if (!virtual) {
+		for (var i = 0; i < this.shipLength; i++) {
+			if (this.direction === Ship.DIRECTION_VERTICAL) {
+				this.playerGrid.cells[x + i][y] = CONST.TYPE_SHIP;
+			} else {
+				this.playerGrid.cells[x][y + i] = CONST.TYPE_SHIP;
+			}
+		}
+	}
+};
+
+// direction === 0 when the ship is facing north/south
+// direction === 1 when the ship is facing east/west
+Ship.DIRECTION_VERTICAL = 0;
+Ship.DIRECTION_HORIZONTAL = 1;
+
+// AI Object
+// Optimal battleship-playing AI
+// Constructor
 
 
 
