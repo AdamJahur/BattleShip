@@ -751,6 +751,13 @@ Ship.prototype.incrementDamage = function() {
 	}
 };
 
+// Checks to see if the ship is sunk
+// Returns boolean
+Ship.prototype.isSunk = function() {
+	return this.damage >= this.maxDamage;
+};
+
+
 
 
 
