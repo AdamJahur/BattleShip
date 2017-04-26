@@ -705,6 +705,32 @@ function Ship(type, playerGrid, player) {
 	this.sunk = false;
 }
 
+// Checks to see if the placement of a ship is legal
+// Returns boolean
+Ship.prototype.isLegal = function(x, y, direction) {
+	// first, check if the ship is within the grid...
+	if (this.withinBounds(x, y, direction)) {
+		// ...then check to make sure it doesn't collide with another ship
+		for (var i = 0; i < this.shipLength; i++) {
+			if (direction === Ship.DIRECTION_VERTICAL) {
+				if (this.playerGrid.cells[x + i][y] === CONST.TYPE_SHIP ||
+					this.playerGrid.cells[x + i][y] === CONST.TYPE_MISS ||
+					this.playerGrid.cells[x + i][y] === CONST.TYPE_SUNK) {
+					return false;
+				}
+			} else {
+				if (this.playerGrid.cells[x][y + i] === CONST.TYPE_SHIP ||
+					this.playerGrid.cells[x][y + i] === CONST.TYPE_MISS ||
+					this.playerGrid.cells[x][y + i] === CONST.TYPE_SUNK) {
+					return false;
+				}
+			}
+		}
+		return true;
+	} else {
+		return false;
+	}
+};
 
 
 
