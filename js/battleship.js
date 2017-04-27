@@ -937,6 +937,62 @@ AI.prototype.shoot = function() {
 	this.updatePobs();
 };
 
+// Update the probability grid
+AI.prototype.updatePobs = function() {
+	var roster = this.virtualFleet.fleetRoster;
+	var coords;
+	this.resetProbs();
+
+	// Probabilities are not normalized to fit in the interval [0, 1]
+	// because we're only interested in the maximum value.
+
+	// This works by trying to fit each ship in each cell in every orientation
+	// For every cell, the more legal ways a ship can pass through it, the more
+	// likely the cell is to contain a ship.
+	// Cells that surround known 'hits' are given an arbitrarily large probability
+	// so that the AI tries to completely sink the ship before moving on.
+	for (var k = 0; k < roster.length; k++) {
+		for (var x = 0; x < Game.size; x++) {
+			for (var y = 0; y < Game.size; y++) {
+				if (roster[k].isLegal(x, y, Ship.DIRECTION_VERTICAL)) {
+					roster[k].create(x, y, Ship.DIRECTION_VERTICAL, true);
+					coords = roster[k].getAllShipCells();
+					if (this.passesThroughHitCell(coords)) {
+						for (var i = 0; i < coords.length; i++) {
+							this.probGrid[coords[i].x][coords[i].y] += AI.PROB_WEIGHT * this.numHitCellsCovered(coords);
+						}
+					} else if {
+						for (var _i = 0; _i < coords.length; _i++) {
+							this.probGrid[coords[_i].x][coords[_i].y]++;
+						}
+					}
+				}
+				if (roster[k].isLegal(x, y, Ship.DIRECTION_HORIZONTAL)) {
+					roster[k].create(x, y, Ship.DIRECTION_HORIZONTAL, true);
+					coords = roster[k].getAllShipCells();
+					if (this.passesThroughHitCell(coords)) {
+						for (var j = 0; j < coords.length; j++) {
+							this.probGrid[coords[j].x][coords[j].y] += AI.PROB_WEIGHT * this.numHitCellsCovered(coords);
+						}
+					} else if {
+						for (var _j = 0; _j < coords.length; _j++) {
+							this.probGrid[coords[_j].x][coords[_j].y]++;
+						}
+					}
+				}
+
+				// Set hit cells to probability zero so the AI doesn't
+				// target cells that are already hit
+				if (this.virtualGrid.cells[x][y] === CONST.TYPE_HIT) {
+					this.probGrid[x][y] = 0;
+				}
+			}
+		}
+	}
+};
+
+
+
 
 
 })();
