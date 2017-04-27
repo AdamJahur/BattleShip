@@ -873,7 +873,69 @@ AI.OPENINGS = [
 	{'x': 0, 'y': 0, 'weight': getRandom(AI.OPEN_HIGH_MIN, AI.OPEN_HIGH_MAX)}
 ];
 
+// Scouts the grid based on max probability, and shoots at the cell
+// that has the highest probability of containing a ship
+AI.prototype.shoot = function() {
+	var maxProbability = 0;
+	var maxProbCoords;
+	var maxProbs = [];
 
+	// Add the AI's opening book to the probability grid
+	for (var i = 0; i < AI.OPENINGS.length; i++) {
+		var cell = AI.OPENINGS[i];
+		if (this.probGrid[cell.x][cell.y] !== 0) {
+			this.probGrid[cell.x][cell.y] += cell.weight;
+		}
+	}
+
+	for (var x = 0; x < Game.size; x++) {
+		for (var y = 0; y < Game.size; y++) {
+			if (this.probGrid[x][y] > maxProbability) {
+				maxProbability = this.probGrid[x][y];
+				maxProbs = [{'x': x, 'y': y}]; // Replace array
+			} else if (this.probGrid[x][y] === maxProbability) {
+				maxProbs.push({'x': x, 'y': y});
+			}
+		}
+	}
+
+	maxProbCoords = Math.random() < AI.RANDOMNESS ?
+	maxProbs[Math.floor(Math.random() * maxProbs.length)] :
+	maxProbs[0];
+
+	var result = this.gameObject.shoot(maxProbCoords.x, maxProbCoords.y, CONST.HUMAN_PLAYER);
+
+	// If the game ends, the next lines need to be skipped.
+	if (Game.gameOver) {
+		Game.gameOver = false;
+		return;
+	}
+
+	this.virtualGrid.cells[maxProbCoords.x][maxProbCoords.y] = result;
+
+	// If you hit a ship, check to make sure if you've sunk it.
+	if (result === CONST.TYPE_HIT) {
+		var humanShip = this.findHumanShip(maxProbCoords.x, maxProbCoords.y);
+		if (humanShip.isSunk()) {
+			// Remove any ships from the roster that have been sunk
+			var shipTypes = [];
+			for (var k = 0; k < this.virtualFleet.fleetRoster.length; k++) {
+				shipTypes.push(this.virtualFleet.fleetRoster[k].type);
+			}
+			var index = shipTypes.indexOf(humanShip.type);
+			this.virtualFleet.fleetRoster.splice(index, 1);
+
+			// Update the virtual grid with the sunk ship's cells
+			var shipCells = humanShip.getAllShipCells();
+			for (var _i = 0; _i < shipCells.length; _i++) {
+				this.virtualFleet.cells[shipCells[_i].x][shipCells[_i].y] = CONST.TYPE_SUNK;
+			}
+		}
+	}
+
+	// Update probability grid after each shot
+	this.updatePobs();
+};
 
 
 
