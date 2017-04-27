@@ -823,6 +823,55 @@ Ship.DIRECTION_HORIZONTAL = 1;
 // AI Object
 // Optimal battleship-playing AI
 // Constructor
+function AI(gameObject) {
+	this.gameObject = gameObject;
+	this.virtualGrid = new Grid(Game.size);
+	this.virtualFleet = new Fleet(this.virtualGrid, CONST.VIRTUAL_PLAYER);
+
+	this.probGrid = []; // Probability Grid
+	this.initProbs();
+	this.updatePobs();
+}
+
+AI.PROB_WEIGHT = 5000; // arbitrarily big number
+
+// how much weight to give to the opening book's high probability cells
+AI.OPEN_HIGH_MIN = 20;
+AI.OPEN_HIGH_MAX = 30;
+
+// how much weight to give to the opening book's medium probability cells
+AI.OPEN_MED_MIN = 15;
+AI.OPEN_MED_MAX = 25;
+
+// how much weight to give to the opening book's low probability cells
+AI.OPEN_LOW_MIN = 10;
+AI.OPEN_LOW_MAX = 20;
+
+// Amount of randomness when selecting between cells of equal probability
+AI.RANDOMNESS = 0.1;
+
+// AI's opening book.
+// This is the pattern of the first cells for the AI to target
+AI.OPENINGS = [
+	{'x': 7, 'y': 3, 'weight': getRandom(AI.OPEN_LOW_MIN, AI.OPEN_LOW_MAX)},
+	{'x': 6, 'y': 2, 'weight': getRandom(AI.OPEN_LOW_MIN, AI.OPEN_LOW_MAX)},
+	{'x': 3, 'y': 7, 'weight': getRandom(AI.OPEN_LOW_MIN, AI.OPEN_LOW_MAX)},
+	{'x': 2, 'y': 6, 'weight': getRandom(AI.OPEN_LOW_MIN, AI.OPEN_LOW_MAX)},
+	{'x': 6, 'y': 6, 'weight': getRandom(AI.OPEN_LOW_MIN, AI.OPEN_LOW_MAX)},
+	{'x': 3, 'y': 3, 'weight': getRandom(AI.OPEN_LOW_MIN, AI.OPEN_LOW_MAX)},
+	{'x': 5, 'y': 5, 'weight': getRandom(AI.OPEN_LOW_MIN, AI.OPEN_LOW_MAX)},
+	{'x': 4, 'y': 4, 'weight': getRandom(AI.OPEN_LOW_MIN, AI.OPEN_LOW_MAX)},
+	// {'x': 9, 'y': 5, 'weight': getRandom(AI.OPEN_MED_MIN, AI.OPEN_MED_MAX)},
+	// {'x': 0, 'y': 4, 'weight': getRandom(AI.OPEN_MED_MIN, AI.OPEN_MED_MAX)},
+	// {'x': 5, 'y': 9, 'weight': getRandom(AI.OPEN_MED_MIN, AI.OPEN_MED_MAX)},
+	// {'x': 4, 'y': 0, 'weight': getRandom(AI.OPEN_MED_MIN, AI.OPEN_MED_MAX)},
+	{'x': 0, 'y': 8, 'weight': getRandom(AI.OPEN_MED_MIN, AI.OPEN_MED_MAX)},
+	{'x': 1, 'y': 9, 'weight': getRandom(AI.OPEN_HIGH_MIN, AI.OPEN_HIGH_MAX)},
+	{'x': 8, 'y': 0, 'weight': getRandom(AI.OPEN_MED_MIN, AI.OPEN_MED_MAX)},
+	{'x': 9, 'y': 1, 'weight': getRandom(AI.OPEN_HIGH_MIN, AI.OPEN_HIGH_MAX)},
+	{'x': 9, 'y': 9, 'weight': getRandom(AI.OPEN_HIGH_MIN, AI.OPEN_HIGH_MAX)},
+	{'x': 0, 'y': 0, 'weight': getRandom(AI.OPEN_HIGH_MIN, AI.OPEN_HIGH_MAX)}
+];
 
 
 
