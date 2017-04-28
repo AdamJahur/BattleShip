@@ -991,6 +991,34 @@ AI.prototype.updatePobs = function() {
 	}
 };
 
+// Initializes the probability grid for targeting
+AI.prototype.initProbs = function() {
+	for (var x = 0; x < Game.size; x++) {
+		var row = [];
+		this.probGrid[x] = row;
+		for (var y = 0; y < Game.size; y++) {
+			row.push(0);
+		}
+	}
+};
+
+// Resets the probability grid to all 0.
+AI.prototype.resetProbs = function() {
+	for (var x = 0; x < Game.size; x++) {
+		for (var y = 0; y < Game.size; y++) {
+			this.probGrid[x][y] = 0;
+		}
+	}
+};
+
+AI.prototype.metagame = function() {
+	// Inputs:
+	// Proximity of hit cells to edge
+	// Proximity of hit cells to each other
+	// Edit the probability grid by multiplying each cell with a new probability weight (e.g. 0.4, or 3). 
+	//Set this as a CONST and make 1-CONST the inverse for decreasing, or 2*CONST for increasing
+};
+
 
 
 
