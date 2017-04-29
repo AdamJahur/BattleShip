@@ -1019,6 +1019,39 @@ AI.prototype.metagame = function() {
 	//Set this as a CONST and make 1-CONST the inverse for decreasing, or 2*CONST for increasing
 };
 
+// Finds a human ship by coordinates
+// Returns Ship
+AI.prototype.findHumanShip = function(x, y) {
+	return this.gameObject.humanFleet.findShipByCoords(x, y);
+};
+
+// Checks whether or not a given ship's cells passes through
+// any cell that is hit.
+// Returns boolean
+AI.prototype.passesThroughHitCell = function(shipCells) {
+	for (var i = 0; i < shipCells.length; i++) {
+		if (this.virtualGrid.cells[shipCells[i].x][shipCells[i].y] === CONST.TYPE_HIT) {
+			return true;
+		}
+	}
+	return false;
+};
+
+// Gives the number of hit cells the ships passes through. The more
+// cells this is, the more probable the ship exists in those coordinates
+// Returns int
+AI.prototype.numHitCellsCovered = function(shipCells) {
+	var cells = 0;
+	for (var i = 0; i < shipCells.length; i++) {
+		if (this.virtualGrid.cells[shipCells[i].x][shipCells[i].y] === CONST.TYPE_HIT) {
+			cells++;
+		}
+	}
+	return cells;
+};
+
+// Start the game
+var mainGame = new Game(10);
 
 
 
