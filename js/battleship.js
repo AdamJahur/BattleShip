@@ -682,19 +682,19 @@ function Ship(type, playerGrid, player) {
 	this.player = player;
 
 	switch (this.type) {
-		case CONST.AVAILABLE_SHIPS[0];
+		case CONST.AVAILABLE_SHIPS[0]:
 			this.shipLength = 5;
 			break;
-		case CONST.AVAILABLE_SHIPS[1];
+		case CONST.AVAILABLE_SHIPS[1]:
 			this.shipLength = 4;
 			break;
-		case CONST.AVAILABLE_SHIPS[2];
+		case CONST.AVAILABLE_SHIPS[2]:
 			this.shipLength = 3;
 			break;
-		case CONST.AVAILABLE_SHIPS[3];
+		case CONST.AVAILABLE_SHIPS[3]:
 			this.shipLength = 3;
 			break;
-		case CONST.AVAILABLE_SHIPS[4];
+		case CONST.AVAILABLE_SHIPS[4]:
 			this.shipLength = 2;
 			break;
 		default:
@@ -703,7 +703,7 @@ function Ship(type, playerGrid, player) {
 	}
 	this.maxDamage = this.shipLength;
 	this.sunk = false;
-}
+};
 
 // Checks to see if the placement of a ship is legal
 // Returns boolean
@@ -961,7 +961,7 @@ AI.prototype.updatePobs = function() {
 						for (var i = 0; i < coords.length; i++) {
 							this.probGrid[coords[i].x][coords[i].y] += AI.PROB_WEIGHT * this.numHitCellsCovered(coords);
 						}
-					} else if {
+					} else {
 						for (var _i = 0; _i < coords.length; _i++) {
 							this.probGrid[coords[_i].x][coords[_i].y]++;
 						}
@@ -974,7 +974,7 @@ AI.prototype.updatePobs = function() {
 						for (var j = 0; j < coords.length; j++) {
 							this.probGrid[coords[j].x][coords[j].y] += AI.PROB_WEIGHT * this.numHitCellsCovered(coords);
 						}
-					} else if {
+					} else {
 						for (var _j = 0; _j < coords.length; _j++) {
 							this.probGrid[coords[_j].x][coords[_j].y]++;
 						}
@@ -1054,6 +1054,30 @@ AI.prototype.numHitCellsCovered = function(shipCells) {
 var mainGame = new Game(10);
 
 
-
-
 })();
+
+
+// Browser compatability workaround for transition end event names.
+// From modernizr: http://stackoverflow.com/a/9090128
+function transitionEndEventName() {
+	var i,
+		undefined,
+		el = document.createElement('div'),
+		transitions = {
+			'transition':'transitionend',
+			'OTransition':'otransitionend',  // oTransitionEnd in very old Opera
+			'MozTransition':'transitionend',
+			'WebkitTransition':'webkitTransitionEnd'
+		};
+
+	for (i in transitions) {
+		if (transitions.hasOwnProperty(i) && el.style[i] !== undefined) {
+			return transitions[i];
+		}
+	}
+}
+
+// Returns a random number between min (inclusive) and max (exclusive)
+function getRandom(min, max) {
+	return Math.random() * (max - min) + min;
+}
